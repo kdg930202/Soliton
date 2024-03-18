@@ -4,7 +4,7 @@
 % clearvars
 % % close all
 
-function Particle_num = threshold(ratio)
+function Particle_num = threshold(ratio, Gin)
 format compact
 close all
 tic
@@ -70,29 +70,18 @@ EC=(hbar^2)*(KX.^2+KY.^2)/(2*mp);
 
 %%%%% Nonlinear interaction %%%%%%%%
 %%%%% Parameters controled by experimantal
-alpha=2*10^-3;	%meV*um^2
-Gin = 0.02;   % Gain rate 0.02 ps^-1 um^2
+alpha=5*10^-3;	%meV*um^2
+% Gin = 0.005;   % Gain rate 0.005 ps^-1 um^2
 beta= 1*alpha;
-
-
-%%%%%% Pump parameters: Laguerre Gaussian pumping
-%%% Pump Rate Intensity no dxdy thing!!!!
-
-
-
 omega = 0.15/hbar; %ps^-1
-tauP = 14;   % ps
+tauP = 15;   % ps
 tauR = 120; % ps
 Gamma = 1*hbar/(2*tauP);
-% Gamma = 0;
-
 
 
 % ratio = 10;
 Inten_Pn = ratio*1/(Gin*tauP*tauR);
-% Inten_Pr = 0.05*20;
 Inten_Pr = 0.05*20;
-% Inten_Pr = 0.05*100;
 sigr = 6; % size
 sigr_Poten = 2;
 sigr_non = 10;
@@ -110,7 +99,6 @@ Phase = atan2(Y,X);
 r = sqrt(X.^2 + Y.^2);
 
 kky = -0.5; %um^-1
-% kky = -3.4;
 Pr = turn_Pr*Inten_Pr*exp(-(RL/sigr).^2).*exp(-1i*kky*Y);
 Pn = turn_Pn*Inten_Pn*exp(-(RL_non/sigr_non).^2);
 % Pr(Y<locate_pump) = 0;
