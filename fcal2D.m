@@ -4,6 +4,7 @@ function [fpsi,frev] = fcal2D(psi,rev,t,para)
 
 psik=fftshift(fft2(ifftshift(psi)));
 
+%
 
 % fpsi=-(1i/hbar)*sstep*(...
 % fftshift(ifft2(ifftshift(EC.*psik)))...  
