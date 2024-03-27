@@ -4,7 +4,8 @@
 % clearvars
 % % close all
 
-function Particle_num = threshold(ratio, Gin)
+% function Particle_num = threshold(ratio, Gin)
+clearvars
 format compact
 close all
 tic
@@ -21,13 +22,13 @@ me=511*10^6/c^2;	% Free electron mass (meV/c^2)
 mp=(7*10^-5)*me; % mass of Cavity photon
 %%% Calculation Contronl
 tstart = 1;	% Initial Dynamics time (ps)
-tfinish = 400;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
+tfinish = 300;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
 tp = tfinish/2;
 tstep=0.1;%0.25;	% Frequency to stroe data
 Nt=(tfinish-tstart)/tstep;
-turn_Pr = 0;
+turn_Pr = 1;
 turn_Pn = 1;
-turn_defect = 0;
+turn_defect = 1;
 %%%%%% End
 
 %%%%%% Grid of energy, momentum and real space
@@ -71,7 +72,7 @@ EC=(hbar^2)*(KX.^2+KY.^2)/(2*mp);
 %%%%% Nonlinear interaction %%%%%%%%
 %%%%% Parameters controled by experimantal
 alpha=5*10^-3;	%meV*um^2
-% Gin = 0.005;   % Gain rate 0.005 ps^-1 um^2
+Gin = 0.05;   % Gain rate 0.05 ps^-1 um^2
 beta= 1*alpha;
 omega = 0.15/hbar; %ps^-1
 tauP = 15;   % ps
@@ -79,7 +80,7 @@ tauR = 120; % ps
 Gamma = 1*hbar/(2*tauP);
 
 
-% ratio = 10;
+ratio = 2;
 Inten_Pn = ratio*1/(Gin*tauP*tauR);
 Inten_Pr = 0.05*20;
 sigr = 6; % size
@@ -87,12 +88,12 @@ sigr_Poten = 2;
 sigr_non = 10;
 
 locate_pump = -50;
-locate_poten = 10;
-locate_non = 0;
+locate_poten = -10;
+locate_non = -10;
 
 RL = sqrt(X.^2+(Y-locate_pump).^2);
-RL_non = sqrt(X.^2+(Y+locate_non).^2);
-RL_poten = sqrt(X.^2+(Y+locate_poten).^2);
+RL_non = sqrt(X.^2+(Y-locate_non).^2);
+RL_poten = sqrt(X.^2+(Y-locate_poten).^2);
 Phase = atan2(Y,X);
 
 %Gaussian
@@ -106,20 +107,28 @@ Pn = turn_Pn*Inten_Pn*exp(-(RL_non/sigr_non).^2);
 PE = 10; %meV;
 Poten = turn_defect*PE*exp(-(RL_poten/sigr_Poten).^2);
 
+figure()
+subplot(1,3,1)
+pcolor(x,y,abs(Poten));
+subplot(1,3,2)
+pcolor(x,y,abs(Pr));
+subplot(1,3,3)
+pcolor(x,y,abs(Pn));
+
 
 % system_name = sprintf('locatePn = %0.2f, locatePr = %0.2f, locateDefect = %0.2f.jpg',-locate_non,locate_pump,-locate_poten);
-% figure()
-% pcolor(x,y,abs(Pr));
-% % pcolor(x,y,ss);
-% hold on
-% axis(2*[-32 32 -32 32])
-% % pcolor(x,y,abs(Pn));
-% viscircles([0,-locate_non],sigr_non,'Color','w');
-% viscircles([0,-locate_poten],sigr_Poten);
-% % title("Resonant","FontSize",20)
-% axis on
-% colorbar
-% saveas(gcf,system_name)
+figure()
+pcolor(x,y,abs(Pr));
+% pcolor(x,y,ss);
+hold on
+axis(2*[-32 32 -32 32])
+% pcolor(x,y,abs(Pn));
+viscircles([0,locate_non],sigr_non,'Color','w');
+viscircles([0,locate_poten],sigr_Poten);
+% title("Resonant","FontSize",20)
+axis on
+colorbar
+% % saveas(gcf,system_name)
 
 
 
@@ -445,8 +454,8 @@ for i = 1:len_Psi(3)
 end
 
 
-% figure()
-% plot(Particle_num)
+figure()
+plot(Particle_num)
 % saveas(gcf,'particle_num with ratio=%d.jpg', ratio)
 
 
@@ -478,4 +487,4 @@ end
 % 
 % saveas(gcf,fig_name2)
 
-end
+% end
