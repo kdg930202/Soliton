@@ -22,7 +22,7 @@ me=511*10^6/c^2;	% Free electron mass (meV/c^2)
 mp=(7*10^-5)*me; % mass of Cavity photon
 %%% Calculation Contronl
 tstart = 1;	% Initial Dynamics time (ps)
-tfinish = 300;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
+tfinish = 10;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
 tp = tfinish/2;
 tstep=0.1;%0.25;	% Frequency to stroe data
 Nt=(tfinish-tstart)/tstep;
@@ -123,8 +123,8 @@ pcolor(x,y,abs(Pr));
 hold on
 axis(2*[-32 32 -32 32])
 % pcolor(x,y,abs(Pn));
-viscircles([0,locate_non],sigr_non,'Color','w');
-viscircles([0,locate_poten],sigr_Poten);
+% viscircles([0,locate_non],sigr_non,'Color','w');
+% viscircles([0,locate_poten],sigr_Poten);
 % title("Resonant","FontSize",20)
 axis on
 colorbar
