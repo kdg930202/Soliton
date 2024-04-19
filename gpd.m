@@ -104,19 +104,37 @@ Phase = atan2(Y,X);
 %Gaussian
 r = sqrt(X.^2 + Y.^2);
 
+absorbL = 100;
+streng = 1;
+RL_ab=sqrt((X).^2+(Y).^2);
+ab_boundary = streng*(RL_ab-absorbL>0).*(RL_ab-absorbL)*(-1i);
+
 kky = -0.5; %um^-1
 % kky = -3.4;
 Pr = Inten_Pr*exp(-(RL/sigr).^2).*exp(-1i*kky*Y);
 % Pn = Inten_Pn*exp(-(RL_non/sigr_non).^2);
-Pn = Inten_Pn*ones(length(x), length(y));
+
+R=absorbL-10; % Trap size
+dr = 0.001;
+r1 = @(x,y) sqrt((y).^2+(x).^2);
+Lieb=@(x,y) 0.5*(-(tanh((abs(r1(x,y))-R)/dr))+1);
+% Lieb=@(x,y) ((tanh((abs(r1(x,y))-R)/dr)));
+Pn=Inten_Pn*Lieb(X,Y);
+% uc=0;
+% Pn=Lieb(mod(X-uc/2,uc),mod(Y-uc/2,uc));
+% surf(X,Y,Pn)
+% shading interp
+
+% Pn = Inten_Pn*(RL_ab-absorbL>0).*(RL_ab-absorbL);
 PE = 10; %meV;
 Poten = PE*exp(-(RL_poten/sigr_Poten).^2);
 
-absorbL = 100;
-RL_ab=sqrt((X).^2+(Y).^2);
-ab_boundary = (RL_ab-absorbL>0).*(RL_ab-absorbL)*(-1i);
+
 % figure()
 % surf(x,y,abs(ab_boundary))
+% figure()
+% surf(x,y,Pn)
+% axis equal
 
 Poten = Poten + ab_boundary;
 
@@ -577,7 +595,7 @@ for i = 1:mat_size(3)
     shading flat
     axis equal
     title(['time : ' sprintf('%g',time(i)),'ps'],"FontSize",20);
-    axis([-32 32 -32 32]);
+    % axis([-32 32 -32 32]);
     FolderName = 'movie';
     [~, file]  = fileparts(filename);  % Remove extension
     saveas(gca, fullfile(FolderName, [file, '.jpg'])); 
