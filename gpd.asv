@@ -19,7 +19,7 @@ me=511*10^6/c^2;	% Free electron mass (meV/c^2)
 mp=(7*10^-5)*me; % mass of Cavity photon
 %%% Calculation Contronl
 tstart = 1;	% Initial Dynamics time (ps)
-tfinish = 200;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
+tfinish = 150;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
 tp = tfinish/2;
 tstep=0.1;%0.25;	% Frequency to stroe data
 Nt=(tfinish-tstart)/tstep;
@@ -112,7 +112,7 @@ ab_boundary = streng*(RL_ab-absorbL>0).*(RL_ab-absorbL)*(-1i);
 kky = -0.5; %um^-1
 % kky = -3.4;
 Pr = Inten_Pr*exp(-(RL/sigr).^2).*exp(-1i*kky*Y);
-Pn = Inten_Pn*ones(length(x),length(x));
+% % Pn = Inten_Pn*exp(-(RL_non/sigr_non).^2);
 
 
 
@@ -124,11 +124,6 @@ Poten = PE*exp(-(RL_poten/sigr_Poten).^2);
 figure()
 surf(x,y,abs(ab_boundary))
 shading interp
-
-figure()
-surf(x,y,abs(Pn))
-shading interp
-
 
 Poten = Poten + ab_boundary;
 
@@ -463,9 +458,7 @@ figure()
 plot(time, Particle_num)
 xlabel('ps')
 saveas(gcf,'particle_number.jpg')
-%
 
-%%
 mat_size = size(M);
 
 normal_sel = 0.6;
@@ -474,16 +467,9 @@ for i = 1:mat_size(3)
     final_density(:,:,i) = inten_M/max(max(inten_M));
 end
 
-%%
-for i = 1:mat_size(3)
-    % figure()
-    pcolor(X,Y,final_density(:,:,i))
-    colormap hot
-    shading flat
-    viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
-    axis([-32 32 -32 32]);
-    saveas(gcf,sprintf('%d.jpg',i))
-end
+
+
+
 
 % time = 0:tstep:tfinish;
 % fig_name =  sprintf('ratio = %0.2f, radius_non = %0.2f.jpg',ratio,sigr_non);
@@ -539,19 +525,19 @@ end
 %%
 % Image generation for movie
 
-% for i = 1:mat_size(3)
-%     filename =  sprintf('%dth.jpg',i);
-%     % figure()
-%     pcolor(X,Y,final_density(:,:,i));
-%     viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
-%     colormap hot
-%     shading flat
-%     axis equal
-%     title(['time : ' sprintf('%g',time(i)),'ps'],"FontSize",20);
-%     % axis([-32 32 -32 32]);
-%     FolderName = 'movie';
-%     [~, file]  = fileparts(filename);  % Remove extension
-%     saveas(gca, fullfile(FolderName, [file, '.jpg'])); 
-%     % saveas(gcf,fig_name)
-% 
-% end
+for i = 1:mat_size(3)
+    filename =  sprintf('%dth.jpg',i);
+    % figure()
+    pcolor(X,Y,final_density(:,:,i));
+    viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
+    colormap hot
+    shading flat
+    axis equal
+    title(['time : ' sprintf('%g',time(i)),'ps'],"FontSize",20);
+    % axis([-32 32 -32 32]);
+    FolderName = 'movie';
+    [~, file]  = fileparts(filename);  % Remove extension
+    saveas(gca, fullfile(FolderName, [file, '.jpg'])); 
+    % saveas(gcf,fig_name)
+
+end
