@@ -128,6 +128,8 @@ shading interp
 figure()
 surf(x,y,abs(Pn))
 shading interp
+% saveas(gcf,'images/particle_number.jpg')
+% saveas(gcf,sprintf('images/%d.jpg',1))
 
 
 Poten = Poten + ab_boundary;
@@ -468,21 +470,28 @@ saveas(gcf,'particle_number.jpg')
 %%
 mat_size = size(M);
 
-normal_sel = 0.6;
+normal_sel = 0.4;
 for i = 1:mat_size(3)
     inten_M = abs(M(:,:,i)).^normal_sel;
     final_density(:,:,i) = inten_M/max(max(inten_M));
 end
 
+
 %%
+% figure()
+% pcolor(X,Y,final_density(:,:,end))
+% colormap hot
+% shading flat
+% axis([-32 32 -32 32]);
+
 for i = 1:mat_size(3)
     % figure()
     pcolor(X,Y,final_density(:,:,i))
     colormap hot
     shading flat
     viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
-    axis([-32 32 -32 32]);
-    saveas(gcf,sprintf('%d.jpg',i))
+    axis([-32 32 -32 32]);`
+    saveas(gcf,sprintf('images/%d.jpg',i))
 end
 
 % time = 0:tstep:tfinish;
