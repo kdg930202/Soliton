@@ -33,7 +33,7 @@ sstep=tstep/Ns;	% This time step in time used in solving the differential equati
 
 
 uc=1; % Unit cell size (um)
-nuc=256; % Number of Unit Cell in one direction from 0-end
+nuc=128; % Number of Unit Cell in one direction from 0-end
 
 
 %%% For real space
@@ -104,7 +104,7 @@ Phase = atan2(Y,X);
 %Gaussian
 r = sqrt(X.^2 + Y.^2);
 
-absorbL = 200;
+absorbL = 100;
 streng = 1;
 RL_ab=sqrt((X).^2+(Y).^2);
 ab_boundary = streng*(RL_ab-absorbL>0).*(RL_ab-absorbL)*(-1i);
@@ -470,7 +470,7 @@ saveas(gcf,'particle_number.jpg')
 %%
 mat_size = size(M);
 
-normal_sel = 0.4;
+normal_sel = 0.6;
 for i = 1:mat_size(3)
     inten_M = abs(M(:,:,i)).^normal_sel;
     final_density(:,:,i) = inten_M/max(max(inten_M));
@@ -490,7 +490,7 @@ for i = 1:mat_size(3)
     colormap hot
     shading flat
     viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
-    axis([-32 32 -32 32]);`
+    axis([-32 32 -32 32]);
     saveas(gcf,sprintf('images/%d.jpg',i))
 end
 
