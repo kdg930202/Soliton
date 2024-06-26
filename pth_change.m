@@ -2,11 +2,12 @@
 %%% Multi-track simulation
 %%% We will turn off all disp in GP2DF!!!!
 % clearvars
-% % close all
-function nonresonant(ratio, sigr_non)
-display([ratio,sigr_non])
-format compact
-close all
+% % % close all
+% format compact
+% close all
+
+function result = pth_change(ratio)
+
 tic
 
 
@@ -21,7 +22,7 @@ me=511*10^6/c^2;	% Free electron mass (meV/c^2)
 mp=(7*10^-5)*me; % mass of Cavity photon
 %%% Calculation Contronl
 tstart = 1;	% Initial Dynamics time (ps)
-tfinish = 50;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
+tfinish = 400;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
 tp = tfinish/2;
 tstep=0.1;%0.25;	% Frequency to stroe data
 Nt=(tfinish-tstart)/tstep;
@@ -86,14 +87,14 @@ Gamma = 1*hbar/(2*tauP);
 % P0 = 0.001;
 % P0 = 0.05*Gamma*sqrt(hbar*omega/alphaNL);
 
-% ratio = 10;
+% ratio = 2;
 Inten_Pn = ratio*1/(Gin*tauP*tauR);
 % Inten_Pr = 0.05*20;
 Inten_Pr = 0.05*20;
 % Inten_Pr = 0.05*100;
 sigr = 6; % size
 sigr_Poten = 2;
-% sigr_non = 10;
+sigr_non = 10;
 
 locate_pump = -50;
 locate_poten = 10;
@@ -106,57 +107,40 @@ Phase = atan2(Y,X);
 %Gaussian
 r = sqrt(X.^2 + Y.^2);
 
+absorbL = 100;
+streng = 1;
+RL_ab=sqrt((X).^2+(Y).^2);
+ab_boundary = streng*(RL_ab-absorbL>0).*(RL_ab-absorbL)*(-1i);
+
 kky = -0.5; %um^-1
 % kky = -3.4;
 Pr = Inten_Pr*exp(-(RL/sigr).^2).*exp(-1i*kky*Y);
-Pn = Inten_Pn*exp(-(RL_non/sigr_non).^2);
-% Pr(Y<locate_pump) = 0;
-% Pr = Inten_Pr*exp(-(RL/sigr).^2);
+% Pn = Inten_Pn*ones(length(x),length(x));
+Pn = Inten_Pn*exp(-(RL/sigr_non).^2);
+
+
+
+
 PE = 10; %meV;
 Poten = PE*exp(-(RL_poten/sigr_Poten).^2);
 
 
-
-figure()
-pcolor(x,y,abs(Pr));
-% pcolor(x,y,ss);
-hold on
-% axis([-32 32 -32 32])
-% pcolor(x,y,abs(Pn));
-viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--')
-title("Resonant","FontSize",20)
-axis on
-colorbar
-
-figure()
-% pcolor(x,y,abs(Pr));
-% pcolor(x,y,ss);
-hold on
-axis([-32 32 -32 32])
-pcolor(x,y,Poten);
-viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--')
-title("Resonant","FontSize",20)
-axis on
-colorbar
-
 % figure()
-% pcolor(x,y,angle(Pr_test));
-% % pcolor(x,y,ss);
-% hold on
-% axis([-32 32 -32 32])
-% viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--')
-% title("Resonant","FontSize",20)
-% colormap gray
-% axis on
-% title(['wave vector : ' sprintf('%g',-kky)],"FontSize",20);
-% colorbar
-
-% figure()
-% pcolor(x,y,abs(Poten));
+% surf(x,y,abs(ab_boundary))
+% shading interp
 % 
-%     figure()
-%     surf(x,y,abs(Pn));
-%     title("Nonresonant(1Pth)","FontSize",20)
+% figure()
+% surf(x,y,abs(Pn))
+% shading interp
+% saveas(gcf,'images/particle_number.jpg')
+% saveas(gcf,sprintf('images/%d.jpg',1))
+
+
+Poten = Poten + ab_boundary;
+
+
+
+
 
 
 %%
@@ -473,55 +457,118 @@ for ti=0:1:tfinish/tstep
 
 end
 %%
-% Psi_M = abs(M).^2;
-% for i = 1:length(Psi_M)
-%     normal_M(:,:,i) = normalize(M(:,:,i),"norm",Inf);
+Psi_M = abs(M).^2;
+len_Psi = size(Psi_M);
+for i = 1:len_Psi(3)
+    Particle_num(i) = sum(sum(Psi_M(:,:,i)));
+end
+
+result = Particle_num;
+
+% time = 0:tstep:tfinish;
+% 
+% figure()
+% plot(time, Particle_num)
+% xlabel('ps')
+% saveas(gcf,'particle_number.jpg')
+%
+
+%%
+% mat_size = size(M);
+% 
+% normal_sel = 0.6;
+% for i = 1:mat_size(3)
+%     inten_M = abs(M(:,:,i)).^normal_sel;
+%     final_density(:,:,i) = inten_M/max(max(inten_M));
 % end
-% normal_M = abs(normal_M);
-
-inten_ratio = 1;
-mat_size = size(M);
-for i = 1:mat_size(3)
-    ss = abs(M(:,:,i));
-    ss(ss>10^(-3)) = ss(ss>10^(-3))/inten_ratio;
-    inten_decre_M(:,:,i) = ss;
-end
-
-normal_sel = 0.6;
-Psi_normal = inten_decre_M.^normal_sel;
-% mat_size = size(Psi_normal);
 
 
+%%
+% figure()
+% pcolor(X,Y,final_density(:,:,end))
+% colormap hot
+% shading flat
+% axis([-32 32 -32 32]);
 
-for i = 1:mat_size(3)
-    ttest = Psi_normal(:,:,i)/max(max(Psi_normal(:,:,i)));
-    ttest(ttest>10^(-3)) = ttest(ttest>10^(-3))/1;
-    normal_max(:,:,i) = ttest;
-    
-end
+% for i = 1:mat_size(3)
+%     % figure()
+%     pcolor(X,Y,final_density(:,:,i))
+%     colormap hot
+%     shading flat
+%     viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
+%     axis([-32 32 -32 32]);
+%     saveas(gcf,sprintf('images/%d.jpg',i))
+% end
+
+% time = 0:tstep:tfinish;
+% fig_name =  sprintf('ratio = %0.2f, radius_non = %0.2f.jpg',ratio,sigr_non);
+% figure()
+% pcolor(X,Y,final_density(:,:,end));
+% viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
+% colorbar
+% colormap hot
+% shading flat
+% axis equal
+% title(['time : ' sprintf('%g',time(end)),'ps'],"FontSize",20);
+% axis([-32 32 -32 32]);
+% saveas(gcf,fig_name)
+% 
+% fig_name2 =  sprintf('Phase : ratio = %0.2f, radius_non = %0.2f.jpg',ratio,sigr_non);
+% figure()
+% pcolor(X,Y,angle(M(:,:,end)));
+% viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
+% colormap gray
+% shading flat
+% axis equal
+% title(['time : ' sprintf('%g',time(end)),'ps'],"FontSize",20);
+% axis([-32 32 -32 32]);
+% saveas(gcf,fig_name2)
 
 
-time = 0:tstep:tfinish;
-fig_name =  sprintf('ratio = %0.2f, radius_non = %0.2f.jpg',ratio,sigr_non);
-figure()
-pcolor(X,Y,normal_max(:,:,end));
-viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
-colorbar
-colormap hot
-shading flat
-axis equal
-title(['time : ' sprintf('%g',time(end)),'ps'],"FontSize",20);
-axis([-32 32 -32 32]);
-saveas(gcf,fig_name)
 
-fig_name2 =  sprintf('Phase : ratio = %0.2f, radius_non = %0.2f.jpg',ratio,sigr_non);
-figure()
-pcolor(X,Y,angle(M(:,:,end)));
-viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
-colormap gray
-shading flat
-axis equal
-title(['time : ' sprintf('%g',time(end)),'ps'],"FontSize",20);
-axis([-32 32 -32 32]);
-saveas(gcf,fig_name2)
+% plot(plot_t(1:find(plot_t==80)),sum_psi(1:find(plot_t==80)))
+% x_r = 1:find(plot_t == tp);
+% x_r = plot_t(1:find(plot_t==tp));
+% y_r = sum_psi(1:find(plot_t==tp));
+% % 
+% x_l = plot_t(find(plot_t==tp)+1:end) - (plot_t(end)-tp);
+% y_l = flip(sum_psi((find(plot_t==tp)+1:end)));
+
+
+% save parameters
+% save ./result/parameters
+
+% title_name = sprintf('%0.2fPth',ratio);
+
+% figure()
+% plot(x_r,y_r)
+% hold on
+% plot(x_l,y_l,'r')
+% title(title_name,'FontSize',20)
+% saveas(gcf,[title_name,'.png']);
+% time = 0:tstep:tfinish;
+% figure()
+% plot(time, sum_psi)
+% saveas(gcf,'plot.png');
+
+%%
+% Image generation for movie
+
+% for i = 1:mat_size(3)
+%     filename =  sprintf('%dth.jpg',i);
+%     % figure()
+%     pcolor(X,Y,final_density(:,:,i));
+%     viscircles([0,-locate_poten],sigr_Poten,'LineStyle','--');
+%     colormap hot
+%     shading flat
+%     axis equal
+%     title(['time : ' sprintf('%g',time(i)),'ps'],"FontSize",20);
+%     % axis([-32 32 -32 32]);
+%     FolderName = 'movie';
+%     [~, file]  = fileparts(filename);  % Remove extension
+%     saveas(gca, fullfile(FolderName, [file, '.jpg'])); 
+%     % saveas(gcf,fig_name)
+% 
+% end
+
 end
