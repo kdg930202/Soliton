@@ -1,4 +1,3 @@
-
 %%% Multi-track simulation
 %%% We will turn off all disp in GP2DF!!!!
 % clearvars
@@ -9,7 +8,7 @@
 function result = pth_change(ratio)
 
 tic
-%
+
 
 disp(date);
 %%%%%% Define Constants
@@ -22,7 +21,7 @@ me=511*10^6/c^2;	% Free electron mass (meV/c^2)
 mp=(7*10^-5)*me; % mass of Cavity photon
 %%% Calculation Contronl
 tstart = 1;	% Initial Dynamics time (ps)
-tfinish = 400;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
+tfinish = 200;	% Finish time (ps)     % reservoir steady state time needed: 100 ps; +20 ps;
 tp = tfinish/2;
 tstep=0.1;%0.25;	% Frequency to stroe data
 Nt=(tfinish-tstart)/tstep;
@@ -79,7 +78,7 @@ beta= 10^-2;
 
 
 omega = 0.15/hbar; %ps^-1
-tauP = 14;   % ps
+tauP = 15;   % ps
 tauR = 120; % ps
 Gamma = 1*hbar/(2*tauP);
 
@@ -90,7 +89,8 @@ Gamma = 1*hbar/(2*tauP);
 % ratio = 2;
 Inten_Pn = ratio*1/(Gin*tauP*tauR);
 % Inten_Pr = 0.05*20;
-Inten_Pr = 0.05*20;
+% Inten_Pr = 0.05*20;
+Inten_Pr = 0;
 % Inten_Pr = 0.05*100;
 sigr = 6; % size
 sigr_Poten = 2;
@@ -135,8 +135,8 @@ Poten = PE*exp(-(RL_poten/sigr_Poten).^2);
 % saveas(gcf,'images/particle_number.jpg')
 % saveas(gcf,sprintf('images/%d.jpg',1))
 
-
-Poten = Poten + ab_boundary;
+Poten = Poten;
+% Poten = Poten + ab_boundary;
 
 
 
@@ -188,8 +188,8 @@ rng('shuffle'); % make the initial seed depned on current time
 % psi5=10e-1*(zeros(Ny,Nx)+1i*zeros(Ny,Nx));
 % psi5=exp(-X.^2/4).*exp(-Y.^2/4).*exp(1i*X*2);
 % psi5 = Pxy1;
-% psi5=10e-2*(randn(Ny,Nx)+1i*randn(Ny,Nx));
-psi5 = 10e-1*(zeros(Ny,Nx)+1i*zeros(Ny,Nx));
+psi5=10e-5*(randn(Ny,Nx)+1i*randn(Ny,Nx));
+% psi5 = 10e-1*(zeros(Ny,Nx)+1i*zeros(Ny,Nx));
 rev5 = 10e-1*(zeros(Ny,Nx)+1i*zeros(Ny,Nx));
 % noise = 10e-10*(randn(Ny,Nx)+1i*randn(Ny,Nx));
 %%%%%% END
