@@ -8,7 +8,7 @@
 function result = pth_change(ratio)
 
 tic
-
+%
 
 disp(date);
 %%%%%% Define Constants
