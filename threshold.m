@@ -12,7 +12,7 @@ tic
 
 
 disp(date);
-%%%%%% Define Constants
+%%%%%%%% Define Constants
 disp('Defining Constants');
 
 %%% Physical Constants
