@@ -13,6 +13,7 @@ psik=fftshift(fft2(ifftshift(psi)));
 % +1*Rabi.*phi...
 
 % inc = 1; %20
+%
 
 
 b=0.02;
