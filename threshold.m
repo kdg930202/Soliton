@@ -9,7 +9,7 @@ clearvars
 format compact
 close all
 tic
-
+%%
 
 disp(date);
 %%%%%%%% Define Constants
